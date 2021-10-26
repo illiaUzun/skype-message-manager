@@ -66,12 +66,14 @@ def index(request):
         if security_key == "?!Qmc?wT8UDSrBQVxa^Vg_q-^G!9=aLywaPVr?H$@jf7$EUCXBRUPtn_Ey2kQD@A":
             for contact in form.data.get("recipients").split():
                 name = name_map.get(contact)
-                id = id_map.get(name)
-                if id.endswith("@thread.skype"):
-                    skype.chats[id].sendMsg(text)
-                else:
-                    skype.contacts[id].chat.sendMsg(text)
-                time.sleep(random.randint(3, 12))
+                if name is not None:
+                    id = id_map.get(name)
+                    if id is not None:
+                        if id.endswith("@thread.skype"):
+                            skype.chats[id].sendMsg(text)
+                        else:
+                            skype.contacts[id].chat.sendMsg(text)
+                        time.sleep(random.randint(3, 12))
         else:
             raise Exception("Invalid key")
 
