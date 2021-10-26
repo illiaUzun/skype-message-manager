@@ -5,15 +5,34 @@ Copyright (c) 2019 - present AppSeed.us
 import random
 import time
 
+from bootstrap_datepicker_plus import DateTimePickerInput
 from django import forms
 from django import template
 from django.http import HttpResponse
 from django.template import loader
 from skpy import SkypeGroupChat
-from app.requests import skype, Contact, Chat
-from bootstrap_datepicker_plus import DateTimePickerInput
 
+from app.requests import skype, Contact, Chat
 # @login_required(login_url="/login/")
+from core.models import UserMapping
+
+
+def collectChats(skype_chats, chats):
+    print("Already Collected " + str(len(skype_chats)) + " chats")
+    for chat in chats:
+        if (chat.__class__ is SkypeGroupChat):
+            skype_chats.append(Chat(
+                chat.id,
+                chat.topic))
+    recent_chats = skype.chats.recent().values()
+    if len(recent_chats) != 0:
+        collectChats(skype_chats, recent_chats)
+
+
+skype_chats = list()
+collectChats(skype_chats, skype.chats.recent().values())
+
+
 def index(request):
     context = {}
     context['segment'] = 'index'
@@ -27,33 +46,66 @@ def index(request):
             contact.birthday))
     context['contacts'] = contacts
 
-    skype_chats = list()
-    for chat in skype.chats.recent().values():
-        if (chat.__class__ is SkypeGroupChat):
-            skype_chats.append(Chat(
-                chat.id,
-                chat.topic))
     context['chats'] = skype_chats
     context['form'] = MessageSenderForm()
     html_template = loader.get_template('index.html')
 
+    id_map = dict()
+    for chat in skype_chats:
+        id_map.update({chat.topic: chat.id})
+
     if request.method == "POST":
+        name_map = dict()
+        for object in UserMapping.objects:
+            name_map.update({object.external_id: object.name})
+
         form = MessageSenderForm(request.POST)
         text = form.data.get("message_text")
         for contact in form.data.get("recipients").split():
-            if contact.endswith("@thread.skype"):
-                skype.chats[contact].sendMsg(text)
+            name = name_map.get(contact)
+            id = id_map.get(name)
+            if id.endswith("@thread.skype"):
+                skype.chats[id].sendMsg(text)
             else:
-                skype.contacts[contact].chat.sendMsg(text)
+                skype.contacts[id].chat.sendMsg(text)
             time.sleep(random.randint(1, 10))
 
     return HttpResponse(html_template.render(context, request))
+
+
+# @login_required(login_url="/login/")
+def add_ids(request):
+    context = {}
+    context['segment'] = 'add_ids'
+
+    context['contacts'] = UserMapping.objects
+    context['form'] = AddIdForm()
+
+    html_template = loader.get_template('add_ids.html')
+
+    if request.method == "POST":
+        form = AddIdForm(request.POST)
+        for contact in form.data.get("recipients").split(sep=','):
+            sep = contact.split(sep=':')
+            UserMapping(external_id=sep[0], name=sep[1]).save()
+
+    return HttpResponse(html_template.render(context, request))
+
 
 class MessageSenderForm(forms.Form):
     recipients = forms.CharField(widget=forms.Textarea(attrs={'style': "width:100%; height:75%"}))
     message_text = forms.CharField(widget=forms.Textarea(attrs={'style': "width:100%; height:75%"}))
     security_key = forms.CharField(widget=forms.Textarea(attrs={'style': "width:100%; height:75%"}))
     date = forms.DateField(required=False, widget=DateTimePickerInput())
+
+    def clean_title(self):
+        title = self.cleaned_data['title']
+        # Add a check for existing pipeline
+        return title
+
+
+class AddIdForm(forms.Form):
+    recipients = forms.CharField(widget=forms.Textarea(attrs={'style': "width:100%; height:75%"}))
 
     def clean_title(self):
         title = self.cleaned_data['title']

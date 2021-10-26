@@ -4,24 +4,17 @@
         <!-- Sidebar navigation-->
         <nav class="sidebar-nav">
 
-            {% if request.user.is_authenticated %}
             <ul id="sidebarnav">
                 <li> <a class="waves-effect waves-dark" href="/" aria-expanded="false"><i
-                            class="mdi mdi-gauge"></i><span class="hide-menu">Dashboard</span></a>
+                            class="mdi mdi-gauge"></i><span class="hide-menu">skupe</span></a>
+                </li>
+                <li> <a class="waves-effect waves-dark" href="/ids" aria-expanded="false"><i
+                            class="mdi mdi-account-check"></i><span class="hide-menu">Minecraft</span></a>
                 </li>
             </ul>
-            {% endif %}
         </nav>
         <!-- End Sidebar navigation -->
     </div>
     <!-- End Sidebar scroll-->
-
-    <!-- Bottom points-->
-    <div class="sidebar-footer">
-        {% if request.user.is_authenticated %}
-        <!-- item--><a href="{% url 'logout' %}" class="link" data-toggle="tooltip" title="Logout"><i
-                class="mdi mdi-power"></i></a> </div>
-        {% endif %}
-    <!-- End Bottom points-->
 </aside>
 

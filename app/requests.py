@@ -1,6 +1,6 @@
 from skpy import Skype
 
-skype = Skype("stels.1334@gmail.com", "CE06Sgr94ukuO8lw")
+skype = Skype("Sabansky5000@gmail.com", "Iluhakorol99")
 
 
 class Contact(object):

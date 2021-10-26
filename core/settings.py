@@ -8,6 +8,7 @@ import os
 import dj_database_url
 from decouple import config
 from unipath import Path
+import mongoengine
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -79,10 +80,16 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': '',
+        'NAME': 'sabs'
     }
 }
+
+MONGO_HOST = 'localhost'
+MONGO_PORT = '27017'
+MONGO_NAME = 'sabs'
+MONGO_DATABASE_HOST = f'mongodb://{MONGO_HOST}:{MONGO_PORT}/{MONGO_NAME}'
+mongoengine.connect(MONGO_NAME, host=MONGO_DATABASE_HOST)
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators

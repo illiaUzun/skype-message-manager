@@ -10,3 +10,5 @@ python-decouple
 gunicorn
 whitenoise
 skpy
+mongoengine==0.21.0
+django-rest-framework-mongoengine==3.4.1
