@@ -4,11 +4,11 @@ Copyright (c) 2019 - present AppSeed.us
 """
 
 import os
+from pathlib import Path
 
 import dj_database_url
-from decouple import config
-from unipath import Path
 import mongoengine
+from decouple import config
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -77,11 +77,10 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
-
 DATABASES = {
     'default': {
-        'ENGINE': '',
-        'NAME': 'sabs'
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
 

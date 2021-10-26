@@ -8,12 +8,12 @@ import time
 from bootstrap_datepicker_plus import DateTimePickerInput
 from django import forms
 from django import template
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.template import loader
 from skpy import SkypeGroupChat
 
 from app.requests import skype, Contact, Chat
-# @login_required(login_url="/login/")
 from core.models import UserMapping
 
 
@@ -33,6 +33,7 @@ skype_chats = list()
 collectChats(skype_chats, skype.chats.recent().values())
 
 
+@login_required(login_url="/login/")
 def index(request):
     context = {}
     context['segment'] = 'index'
@@ -61,19 +62,23 @@ def index(request):
 
         form = MessageSenderForm(request.POST)
         text = form.data.get("message_text")
-        for contact in form.data.get("recipients").split():
-            name = name_map.get(contact)
-            id = id_map.get(name)
-            if id.endswith("@thread.skype"):
-                skype.chats[id].sendMsg(text)
-            else:
-                skype.contacts[id].chat.sendMsg(text)
-            time.sleep(random.randint(1, 10))
+        security_key = form.data.get("security_key")
+        if security_key == "?!Qmc?wT8UDSrBQVxa^Vg_q-^G!9=aLywaPVr?H$@jf7$EUCXBRUPtn_Ey2kQD@A":
+            for contact in form.data.get("recipients").split():
+                name = name_map.get(contact)
+                id = id_map.get(name)
+                if id.endswith("@thread.skype"):
+                    skype.chats[id].sendMsg(text)
+                else:
+                    skype.contacts[id].chat.sendMsg(text)
+                time.sleep(random.randint(3, 12))
+        else:
+            raise Exception("Invalid key")
 
     return HttpResponse(html_template.render(context, request))
 
 
-# @login_required(login_url="/login/")
+@login_required(login_url="/login/")
 def add_ids(request):
     context = {}
     context['segment'] = 'add_ids'

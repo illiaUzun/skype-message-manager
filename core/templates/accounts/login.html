@@ -1,7 +1,6 @@
-
 {% extends "layouts/base.html" %}
 
-{% block title %} Login {% endblock %} 
+{% block title %} Login {% endblock %}
 
 <!-- Plugins CSS goes HERE  -->
 {% block plugin_stylesheets %}{% endblock plugin_stylesheets %}
@@ -12,23 +11,24 @@
 {% block content %}
 
     <div class="container-fluid">
-        
+
         <!-- ============================================================== -->
         <!-- Bread crumb and right sidebar toggle -->
         <!-- ============================================================== -->
         <div class="row page-titles">
             <div class="col-md-5 col-8 align-self-center">
                 <h3 class="text-themecolor m-b-0 m-t-0">
-                    <a target="_blank" href="https://appseed.us/admin-dashboards/django-dashboard-material-lite">Django MaterialPRO Lite</a> - Login
+                    <a target="_blank" href="https://appseed.us/admin-dashboards/django-dashboard-material-lite">Django
+                        MaterialPRO Lite</a> - Login
                 </h3>
-                <br />
+                <br/>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item">
                         {% if msg %}
                             {{ msg | safe }}
                         {% else %}
                             Add your credentials
-                        {% endif %}                         
+                        {% endif %}
                     </li>
                 </ol>
             </div>
@@ -48,7 +48,7 @@
                     <div class="card-block">
 
                         <form method="post" action="" class="form-horizontal form-material">
-                            
+
                             {% csrf_token %}
 
                             <div class="form-group">
@@ -68,7 +68,6 @@
                             <div class="form-group">
                                 <div class="col-sm-12">
                                     <button type="submit" name="login" class="btn btn-success">Login</button>
-                                    &nbsp;&nbsp; Don't have an account? <a href="{% url 'register' %}">Register</a>
                                 </div>
                             </div>
 
